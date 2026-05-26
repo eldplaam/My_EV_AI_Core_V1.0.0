@@ -1,0 +1,536 @@
+.subtitle {
+  font-size: 12px;
+  color: #00f0ff;
+  opacity: 0.7;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+}
+
+.tactical-dashboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.radar-ble-control-box {
+  width: 300px;
+  margin-bottom: 10px;
+}
+
+.radar-ble-button {
+  padding: 5px 5px;
+
+  font-size: 10px;
+
+  background: transparent;
+
+  color: #00ff66;
+
+  border: 2px solid #00ff66;
+
+  border-radius: 4px;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  text-transform: uppercase;
+
+  letter-spacing: 2px;
+
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+
+  transition: all 0.3s;
+
+  font-family: inherit;
+
+  width: 35%;
+
+  margin-bottom: 10px;
+}
+
+.radar-ble-button:hover {
+  background: #00ff66;
+
+  color: #03060f;
+
+  box-shadow: 0 0 20px #00ff66;
+}
+
+.radar-ble-container {
+  position: relative;
+
+  width: 320px;
+
+  height: 320px;
+}
+
+.radar-ble-screen {
+  width: 70%;
+  height: 70%;
+  top: -25px;
+  right: -45px;
+
+  border: 1px solid #00f0ff;
+
+  border-radius: 50%;
+
+  position: relative;
+
+  background: radial-gradient(
+    circle,
+    rgba(0, 240, 255, 0.02) 0%,
+    rgba(3, 6, 15, 1) 80%
+  );
+
+  box-shadow:
+    0 0 20px rgba(0, 240, 255, 0.2),
+    inset 0 0 25px rgba(0, 240, 255, 0.3);
+
+  overflow: hidden;
+}
+
+.radar-ble-grid-1,
+.radar-ble-grid-2,
+.radar-ble-grid-3 {
+  position: absolute;
+
+  border: 1px dashed rgba(0, 240, 255, 0.2);
+
+  border-radius: 50%;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 3;
+}
+
+.radar-ble-grid-1 {
+  width: 80%;
+  height: 80%;
+}
+
+.radar-ble-grid-2 {
+  width: 55%;
+  height: 55%;
+}
+
+.radar-ble-grid-3 {
+  width: 30%;
+  height: 30%;
+}
+
+.radar-ble-axis-x,
+.radar-ble-axis-y {
+  position: absolute;
+
+  background: rgba(0, 240, 255, 0.15);
+
+  z-index: 3;
+}
+
+.radar-ble-axis-x {
+  top: 50%;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 1px;
+}
+
+.radar-ble-axis-y {
+  left: 50%;
+
+  top: 0;
+
+  width: 1px;
+
+  height: 100%;
+}
+
+.radar-ble-grid-glow {
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(186, 0, 255, 0.4) 49%,
+      rgba(186, 0, 255, 0.4) 51%,
+      transparent 52%
+    ),
+    linear-gradient(rgba(186, 0, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(186, 0, 255, 0.15) 1px, transparent 1px);
+
+  background-size:
+    100% 100%,
+    25px 25px,
+    25px 25px;
+
+  border-radius: 50%;
+
+  z-index: 2;
+}
+
+.radar-ble-core-ring {
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  width: 68%;
+
+  height: 68%;
+
+  border: 1px solid rgba(186, 0, 255, 0.4);
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 2;
+}
+
+.radar-ble-sweep {
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    rgba(0, 255, 102, 0.4) 0%,
+    rgba(0, 255, 102, 0) 50%
+  );
+
+  border-radius: 50%;
+
+  display: none;
+
+  z-index: 4;
+}
+
+.scanning .radar-ble-sweep {
+  display: block;
+
+  animation: radar-ble-sweep-rotate 3s infinite linear;
+}
+
+@keyframes radar-ble-sweep-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-ble-blip {
+  position: absolute;
+
+  width: 12px;
+
+  height: 12px;
+
+  background: #fffb00;
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 10px #fffb00,
+    0 0 20px #fffb00;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 10;
+}
+
+.radar-ble-blip::after {
+  content: "";
+
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  width: 100%;
+
+  height: 100%;
+
+  border: 2px solid #fffb00;
+
+  border-radius: 50%;
+
+  transform: translate(-50%, -50%);
+
+  animation: radar-ble-blip-pulse 1.8s infinite ease-out;
+
+  opacity: 0;
+}
+
+@keyframes radar-ble-blip-pulse {
+  0% {
+    width: 10px;
+
+    height: 10px;
+
+    opacity: 1;
+  }
+
+  100% {
+    width: 50px;
+
+    height: 50px;
+
+    opacity: 0;
+
+    border-color: rgba(255, 251, 0, 0);
+  }
+}
+
+.radar-ble-blip-card {
+  position: absolute;
+
+  bottom: 18px;
+
+  left: 50%;
+
+  transform: translateX(-50%) scale(0.85);
+
+  background: rgba(3, 6, 15, 0.9);
+
+  border: 1px solid #fffb00;
+
+  border-radius: 4px;
+
+  padding: 3px 4px;
+
+  white-space: nowrap;
+
+  text-align: center;
+
+  box-shadow: 0 0 8px rgba(255, 251, 0, 0.3);
+
+  color: #fffb00;
+}
+
+.radar-ble-device-name {
+  font-weight: bold;
+
+  font-size: 11px;
+
+  margin-bottom: 2px;
+}
+
+.radar-ble-device-id {
+  font-size: 9px;
+
+  opacity: 0.8;
+
+  font-family: monospace;
+}
+
+.radar-ble-status {
+  margin-top: 10px;
+
+  font-size: 12px;
+
+  letter-spacing: 2px;
+
+  color: #00f0ff;
+}
+.scifi-box {
+  width: 360px; /* หรือปรับตามต้องการ */
+  aspect-ratio: 1 / 1; /* บังคับให้เป็นสี่เหลี่ยมจัตุรัสเหมือนในรูป */
+  background: rgba(10, 25, 47, 0.7); /* พื้นหลังโปร่งแสงเล็กน้อย */
+  border: 1px solid #00f2fe; /* เส้นขอบสีนีออน */
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); /* เอฟเฟกต์เรืองแสงอ่อนๆ */
+  backdrop-filter: blur(10px); /* เอฟเฟกต์กระจกฝ้าด้านหลังกล่อง */
+}
+.brand-ble-panel {
+  margin: 0;
+  margin-top: 15px;
+  margin-bottom: -5px;
+  padding: 2px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid hsl(143, 83%, 12%);
+}
+.label-ble {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+input,
+select {
+  width: 90%;
+  padding: 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: white;
+  border-radius: 8px;
+}
+/* =========================================================
+   1. ตัวกล่องหลัก (ปรับปรุงจากสเปกเดิมของคุณ)
+   ========================================================= */
+.scifi-box {
+  width: 360px;
+  aspect-ratio: 1 / 1;
+  background: rgba(10, 25, 47, 0.7);
+  border: 1px solid #00f2fe;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+  backdrop-filter: blur(10px);
+
+  /* เพิ่มคำสั่งจัดองค์ประกอบภายในให้อยู่กึ่งกลางแนวดิ่งอย่างเป็นระเบียบ */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* =========================================================
+   2. ปรับแต่งปุ่ม CONNECT BLE ให้หดสั้น และอยู่กึ่งกลาง (ไม่รื้อโค้ด)
+   ========================================================= */
+.radar-ble-button {
+  width: max-content; /* เปลี่ยนความกว้างให้พอดีตัวอักษร ไม่ยืดเต็มกล่อง */
+  padding: 5px 15px; /* ระยะห่างขอบใน บน-ล่าง 8px / ซ้าย-ขวา 24px เพื่อความสวยงาม */
+  margin: 0 auto 15px auto; /* สั่งให้จัดอยู่กึ่งกลางแนวนอน และเว้นระยะห่างจากเรดาร์ด้านล่าง */
+  display: block; /* สั่งเปิดโหมด Block เพื่อให้ margin: auto ทำงานสมบูรณ์ */
+
+  /* สไตล์นีออนเขียวตามรูปภาพ */
+  background: transparent;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+  transition: all 0.3s ease;
+}
+
+.radar-ble-button:hover {
+  background: #00ff66;
+  color: #03060f;
+  box-shadow: 0 0 20px #00ff66;
+}
+
+.flex-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* =========================================================
+   3. ตกแต่งระบบเรดาร์ให้กลมและสร้างแสงเรือง (ตาม HTML คลาสของคุณ)
+   ========================================================= */
+
+/* พื้นที่กลมรอบเรดาร์หลัก */
+.radar-ble-core-ring {
+  width: 220px;
+  height: 220px;
+  border: 2px solid #00f2fe;
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(
+    circle,
+    rgba(0, 242, 254, 0.03) 0%,
+    transparent 75%
+  );
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* เส้นกริดกากบาทและตารางเรืองแสงภายในเรดาร์ */
+.radar-ble-grid-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  /* สร้างเส้นวงกลมซ้อนภายในแบบเรดาร์ทหาร */
+  background-image: radial-gradient(
+    circle,
+    transparent 30%,
+    rgba(0, 242, 254, 0.1) 31%,
+    transparent 32%,
+    transparent 60%,
+    rgba(0, 242, 254, 0.1) 61%,
+    transparent 62%
+  );
+}
+/* เส้นกากบาทตัดกลางแนวดิ่งและแนวตั้ง */
+.radar-ble-grid-glow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: rgba(0, 242, 254, 0.2);
+}
+.radar-ble-grid-glow::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 242, 254, 0.2);
+}
+
+/* แถบสแกนสีม่วง/น้ำเงินวิ่งวน (Sweep Effect) */
+.radar-ble-sweep {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  transform-origin: center;
+}
+
+/* เพิ่มเอฟเฟกต์แอนิเมชันเมื่อคลาส .scanning ทำงาน (ผูกกับ JS 15 วินาทีเดิมของคุณ) */
+.scanning .radar-ble-sweep {
+  animation: radarRadarSweepAnimation 2s linear infinite;
+}
+
+@keyframes radarRadarSweepAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

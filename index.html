@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My_EV_AI_Core_V1.0.0</title>
+    <!-- [ข้อ 4] เชื่อมโยงไฟล์ CSS ตรงนี้ -->
+
+    <link rel="stylesheet" href="style-map.css" />
+    <link rel="stylesheet" href="style-ble.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- LEAFLET -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div class="title">[ My_EV_AI_Core_V1.0.0]</div>
+
+    <div class="scene">
+      <div class="cube" id="scifiCube">
+        <!-- INNER BATTERY -->
+        <div class="inner-battery">
+          <div class="energy" id="energyLevel"></div>
+        </div>
+
+        <div class="scene-mini" id="evScene">
+          <div class="cube-mini" id="evCube">
+            <div class="face-mini f-mini"></div>
+            <div class="face-mini b-mini"></div>
+            <div class="face-mini l-mini"></div>
+            <div class="face-mini r-mini"></div>
+            <div class="face-mini t-mini"></div>
+            <div class="face-mini bot-mini"></div>
+            <div class="bat-3d-mini">
+              <div class="cap-container-mini">
+                <div class="cap-mini cp-f"></div>
+                <div class="cap-mini cp-b"></div>
+                <div class="cap-mini cp-l"></div>
+                <div class="cap-mini cp-r"></div>
+                <div class="cap-mini cp-t"></div>
+              </div>
+
+              <div class="bat-face-mini bm-front">
+                <div class="level-mini"></div>
+                <div class="level-mini"></div>
+                <div class="level-mini"></div>
+              </div>
+
+              <div class="bat-face-mini bm-back">
+                <div class="level-mini"></div>
+                <div class="level-mini"></div>
+                <div class="level-mini"></div>
+              </div>
+
+              <div class="bat-face-mini bm-left"></div>
+
+              <div class="bat-face-mini bm-right"></div>
+              <div class="bat-face-mini bm-top"></div>
+              <div class="bat-face-mini bm-bottom"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======FRONT=========================
+======================================= -->
+        <div class="cube-face face-front">
+          <div class="live-location">
+            <!-- ปรับแก้ไขจุดนี้: เพิ่มคำสั่งควบคุมเพื่อไม่ให้โครงสร้างบิดเบี้ยว -->
+            <div
+              class="map-layer"
+              class="map-container"
+              onclick="zoomElement(event, this)"
+              style="
+                padding: 1px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+              "
+            >
+              <div
+                class="ev-inner-circle-holder"
+                style="
+                  width: 295px;
+                  height: 320px;
+                  top: -10px;
+                  position: relative;
+                "
+              >
+                <!-- ตัวแผนที่หลัก -->
+                <div
+                  id="map"
+                  style="width: 100%; height: 100%; position: relative"
+                >
+                  <!-- ย้ายกลุ่มวงกลมสีฟ้า (Radar Rings) มาไว้ในนี้ เพื่อให้สเกลล็อกตามพิกัดแผนที่เวลาซูม -->
+                  <div
+                    class="radar-map-wrap"
+                    style="
+                      position: absolute;
+                      top: 50%;
+                      left: 50%;
+                      transform: translate(-50%, -50%);
+                      pointer-events: none;
+                      z-index: 999;
+                    "
+                  >
+                    <div class="radar-map-dot"></div>
+                    <div class="radar-map-ring radar-map-ring-1"></div>
+                    <div class="radar-map-ring rada-mapr-ring-2"></div>
+                    <div class="radar-map-ring radar-map-ring-3"></div>
+                    <div class="radar-map-ring radar-map-ring-4"></div>
+                  </div>
+                </div>
+
+                <div class="map-radar-map-sweep"></div>
+              </div>
+            </div>
+            <div class="map-grid"></div>
+          </div>
+          <div class="scan-line"></div>
+
+          <!-- ย้ายกลุ่มเดิมตรงนี้ออกไปแล้ว -->
+
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="100"
+              height="100"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+        </div>
+
+        <!-- =======RIGHT=========================
+======================================= -->
+        <div class="cube-face face-right">
+          <!-- ==========START SVG FRAME======== -->
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="cubeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f0ff" />
+
+                <stop offset="50%" stop-color="#ba00ff" />
+
+                <stop offset="100%" stop-color="#00ff66" />
+              </linearGradient>
+            </defs>
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+          <!-- ==========END SVG FRAME======== -->
+          <div class="face-content">
+            <div class="face-value" id="batteryValue">92%</div>
+            <div class="face-value" id="batteryValue"></div>
+            <div class="panel-row">
+              <div class="brand-ble-panel">
+                <label-ble style="color: #a5b4fc; margin-top: 0">
+                  📡
+                </label-ble>
+                <select id="controllerBrand" onchange="switchBrandSettings()">
+                  <option value="APT">🟢 APT安沛动力 (Original BLE)</option>
+                  <option value="APT_LOT">🟢 APT Smart Match</option>
+                  <option value="APT_96600">🟢 APT (Future Module)</option>
+                  <option value="VOTOL">🔵 VOTOL</option>
+                  <option value="EM">🔵 EM</option>
+                  <option value="FD">🟡 FarDriver</option>
+                  <option value="FARDRIVER">🟡 FARDRIVER</option>
+                  <option value="ND">Nanjing</option>
+                  <option value="Kelly">Kelly Controls</option>
+                  <option value="KLS">Kelly</option>
+                  <option value="Lingbo">Lingbo</option>
+                </select>
+              </div>
+              <button class="radar-ble-button" id="scan-btn">
+                Connect BLE
+              </button>
+
+              <!-- =============START RADAR=========== -->
+              <div class="radar-ble-container">
+                <div id="radar-ble-screen" class="radar-ble-screen">
+                  <div class="radar-ble-axis-x"></div>
+                  <div class="radar-ble-axis-y"></div>
+                  <div class="radar-ble-grid-1"></div>
+                  <div class="radar-ble-grid-2"></div>
+                  <div class="radar-ble-grid-3"></div>
+                  <div class="radar-ble-grid-glow"></div>
+                  <div class="radar-ble-core-ring"></div>
+                  <div class="radar-ble-sweep"></div>
+                </div>
+              </div>
+              <!-- =============END RADAR=========== -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =======LEFT=========================
+======================================= -->
+        <div class="cube-face face-left">
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+
+          <div class="face-content">
+            <div class="face-title">GPS</div>
+
+            <div class="face-value">LIVE</div>
+
+            <div class="face-sub">
+              LAT : 7.8804<br />
+              LNG : 98.3923
+            </div>
+
+            <div class="panel-row">
+              <button class="cube-btn openPopup">MAP</button>
+
+              <button class="cube-btn">TRACK</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======BACK =========================
+======================================= -->
+        <div class="cube-face face-back">
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+
+          <div class="face-content">
+            <div class="face-title">MOTOR</div>
+
+            <div class="face-value" id="rpmValue">3240</div>
+
+            <div class="face-sub">
+              RPM ACTIVE<br />
+              POWER FLOW ONLINE
+            </div>
+
+            <div class="panel-row">
+              <button class="cube-btn openPopup">DATA</button>
+
+              <button class="cube-btn">POWER</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======TOP =========================
+======================================= -->
+        <div class="cube-face face-top">
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+
+          <div class="face-content">
+            <div class="face-title">AI ANALYSIS</div>
+
+            <div class="face-value">OPTIMAL</div>
+
+            <div class="face-sub">
+              EFFICIENCY : 97%<br />
+              MODE : ECO
+            </div>
+
+            <div class="panel-row">
+              <button class="cube-btn openPopup">AI</button>
+
+              <button class="cube-btn">SCAN</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======BOTTOM=========================
+======================================= -->
+        <div class="cube-face face-bottom">
+          <svg class="face-svg" viewBox="0 0 100 100">
+            <rect
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="rgba(0,240,255,0.2)"
+              stroke-width="0.5"
+            />
+
+            <rect
+              class="flare-line"
+              x="2"
+              y="2"
+              width="96"
+              height="96"
+              fill="none"
+              stroke="url(#cubeGlow)"
+              stroke-width="1.5"
+            />
+          </svg>
+
+          <div class="face-content">
+            <div class="face-title">SYSTEM LOG</div>
+
+            <div class="face-sub">
+              BLE CONNECTED<br />
+              GPS ACTIVE<br />
+              AI CORE ONLINE
+            </div>
+
+            <div class="panel-row">
+              <button class="cube-btn openPopup">LOG</button>
+
+              <button class="cube-btn">RESET</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======POPUP=========================
+======================================= -->
+    <!-- ======================================================
+     FULL WORKING POPUP
+====================================================== -->
+    <div class="popup" id="popup">
+      <div class="popup-content">
+        <div class="popup-title">SYSTEM INPUT</div>
+
+        <input type="number" id="speedInput" placeholder="SPEED" />
+
+        <input type="number" id="batteryInput" placeholder="BATTERY %" />
+
+        <input type="number" id="rpmInput" placeholder="RPM" />
+
+        <div class="popup-buttons">
+          <button class="popup-btn" onclick="saveSystemData()">SAVE</button>
+
+          <button class="popup-btn" onclick="closePopup()">CLOSE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======SVG=========================
+======================================= -->
+    <svg width="0" height="0">
+      <defs>
+        <linearGradient id="cubeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00f0ff" />
+          <stop offset="30%" stop-color="#ff0055" />
+          <stop offset="60%" stop-color="#9d00ff" />
+          <stop offset="100%" stop-color="#00f0ff" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- [ข้อ 4] เชื่อมโยงไฟล์ JavaScript ตรงนี้ -->
+    <script src="script-map.js"></script>
+    <script src="script-ble.js"></script>
+  </body>
+</html>

@@ -1,0 +1,2011 @@
+/* ======================================================
+   SVG
+====================================================== */
+.face-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ======================================================
+   RESET
+====================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* ======================================================
+   BODY
+====================================================== */
+body {
+  width: 100%;
+  height: 100vh;
+
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  background: #01040a;
+
+  background-image:
+    radial-gradient(rgba(0, 240, 255, 0.12) 1.5px, transparent 0),
+    linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
+
+  background-size:
+    40px 40px,
+    20px 20px,
+    20px 20px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  perspective: 1600px;
+  color: #dfffff;
+}
+
+/* ======================================================
+   SCANLINE
+====================================================== */
+body::before {
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.015) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+
+  pointer-events: none;
+
+  animation: scanMove 8s linear infinite;
+}
+
+@keyframes scanMove {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(20px);
+  }
+}
+/* =========================================================
+   ล็อกพิกัดจุดสีเหลืองนีออนให้อยู่กึ่งกลางวงกลม 230px ไม่หลุดเฟรม
+========================================================= */
+.radar-map-target {
+  position: absolute !important;
+  width: 10px !important; /* ขนาดจุดหนากำลังดี */
+  height: 10px !important;
+  background-color: #ffffff !important; /* แกนขาวเพื่อความสว่างวาบ */
+  border: 2px solid #fffb00 !important; /* ขอบเหลืองนีออน */
+  border-radius: 50% !important;
+
+  /* สั่งลอยตัวขึ้นมาอยู่เหนือระดับเส้นกริดและแผ่นกวาดสัญญาณ (z-index สูงกว่า .radar-sweep) */
+  z-index: 99999 !important;
+  pointer-events: none !important;
+
+  /* ดึงให้ลอยเด่นแยกมิติกระจก 3D ออกมาด้านหน้า */
+  transform: translateZ(50px) !important;
+
+  /* อัดอานุภาพพลังแสงสะท้อนนีออนสีเหลืองให้หนาและจ้าชัดเจนด้วยตาเปล่า */
+  box-shadow:
+    0 0 15px #fffb00,
+    0 0 25px #ffea00,
+    0 0 35px rgba(255, 234, 0, 0.7) !important;
+}
+
+/* 🎯 จุดที่ 1: สุ่มกระพริบวิ่งในระยะปลอดภัย */
+.target-1 {
+  animation:
+    clearMove1 15s ease-in-out infinite,
+    neonBlink 2s infinite !important;
+}
+
+/* 🎯 จุดที่ 2: สุ่มกระพริบวิ่งในระยะปลอดภัย */
+.target-2 {
+  animation:
+    clearMove2 20s ease-in-out infinite,
+    neonBlink 2.5s infinite 0.8s !important;
+}
+
+/* 🎯 จุดที่ 3: สุ่มกระพริบวิ่งในระยะปลอดภัย */
+.target-3 {
+  animation:
+    clearMove3 25s ease-in-out infinite,
+    neonBlink 1.2s infinite 1s !important;
+}
+
+/* 🎬 แอนิเมชันสั่งสุ่มพิกัดใหม่ให้อยู่ใจกลางวงกลม 230px (ไม่วิ่งกระจัดกระจายหลุดขอบ) */
+@keyframes clearMove1 {
+  0%,
+  100% {
+    top: 30%;
+    left: 35%;
+  }
+  25% {
+    top: 60%;
+    left: 55%;
+  }
+  50% {
+    top: 45%;
+    left: 25%;
+  }
+  75% {
+    top: 35%;
+    left: 65%;
+  }
+}
+
+@keyframes clearMove2 {
+  0%,
+  100% {
+    top: 65%;
+    left: 40%;
+  }
+  30% {
+    top: 35%;
+    left: 60%;
+  }
+  60% {
+    top: 50%;
+    left: 30%;
+  }
+  85% {
+    top: 40%;
+    left: 50%;
+  }
+}
+
+@keyframes clearMove3 {
+  0%,
+  100% {
+    top: 40%;
+    left: 45%;
+  }
+  20% {
+    top: 55%;
+    left: 35%;
+  }
+  45% {
+    top: 30%;
+    left: 55%;
+  }
+  75% {
+    top: 60%;
+    left: 45%;
+  }
+}
+
+/* แอนิเมชันกระพริบติดๆ ดับๆ */
+@keyframes neonBlink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+/* ======================================================
+           ตัวพื้นที่วาดแสงเรดาร์และจุด
+====================================================== */
+.ble-dot {
+  position: absolute;
+  width: 320px;
+  height: 12px;
+  border-radius: 50%;
+  background: #00ffff;
+  box-shadow: 0 0 15px #00ffff;
+  animation: pulse 1.5s infinite;
+}
+/* ======================================================
+   TITLE
+====================================================== */
+.title {
+  position: absolute;
+
+  top: 25px;
+
+  color: #00f0ff;
+
+  letter-spacing: 4px;
+
+  font-size: 15px;
+
+  text-shadow:
+    0 0 10px #00f0ff,
+    0 0 25px #00f0ff;
+
+  animation: flicker 3s infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ======================================================
+   SCENE
+====================================================== */
+.scene {
+  width: 500px;
+  height: 500px;
+
+  position: relative;
+
+  transform-style: preserve-3d;
+}
+
+/* ======================================================
+   CUBE
+====================================================== */
+.cube {
+  width: 100%;
+  height: 100%;
+
+  position: relative;
+
+  transform-style: preserve-3d;
+
+  cursor: grab;
+}
+
+.cube:active {
+  cursor: grabbing;
+}
+
+/* ======================================================
+   3D BATTERY ORIGINAL SYSTEM PRESERVED
+====================================================== */
+.ev-3d-box-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 230px;
+  position: relative;
+}
+
+.scene-mini {
+  width: 10px;
+  height: 10px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  perspective: 600px;
+}
+
+.ev-battery-container {
+  perspective: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 180px; /* ความสูงพอดีกับช่องแสดงผลขวาบน */
+  margin: 10px 0;
+  position: relative;
+}
+
+.cube-mini {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-20deg) rotateY(25deg);
+  transition: transform 0.08s ease-out;
+}
+/* ======================================================
+                OUTER GLASS  ตู้กระจกนอกขอบฟ้านีออน
+====================================================== */
+
+/* 🔥 แก้ปัญหาเบราว์เซอร์บล็อกแสง 3D: สั่งยิงแสงนีออนตรงเข้าหน้าแผ่นลูกบาศก์แบตเตอรี่ทุกชิ้น */
+.face-mini {
+  opacity: 1 !important;
+  background: rgba(
+    0,
+    255,
+    255,
+    0.25
+  ) !important; /* พื้นหลังแผ่นคิวบ์ให้สว่างฟ้านีออนขึ้น */
+  border: 1px solid rgba(0, 255, 255, 0.9) !important; /* เส้นขอบแผ่นแก้วแบตสว่างจ้า */
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.6),
+    inset 0 0 10px rgba(0, 255, 255, 0.4) !important;
+}
+
+/* 🔥 สั่งให้ขีดระดับพลังงานแบตเตอรี่สีเขียวสว่างจ้าทะลุหน้าจอออกมา */
+.level-mini {
+  background-color: #00ffcc !important; /* บังคับใช้สีเขียวนีออนสว่างเข้ม */
+  opacity: 1 !important;
+  box-shadow:
+    0 0 15px #00ffcc,
+    inset 0 0 5px #ffffff !important; /* แสงวาบรอบขีดตัดสีแกนขาว */
+}
+
+/* ปลดล็อกการจมของสีโมเดลครอบ */
+.bat-3d-mini,
+.scene-mini,
+.cube-mini {
+  opacity: 1 !important;
+  background: transparent !important; /* ทำให้โมเดลแบตเตอรี่โปร่งใสเพื่อให้แสงทะลุได้ */
+  border: none !important; /* เอาเส้นขอบออกเพื่อไม่ให้บดบังแสง */
+  box-shadow: none !important; /* เอาเงาออกเพื่อไม่ให้บดบังแสง */
+}
+/* ======================================================
+                     BATTERY 3D
+====================================================== */
+
+.bat-3d-mini {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 80px;
+  transform: translate3d(-50%, -50%, 0);
+  transform-style: preserve-3d;
+}
+
+.bat-face-mini {
+  position: absolute;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 25, 40, 0.96),
+    rgba(5, 8, 16, 0.98)
+  );
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 4px;
+  padding: 4px;
+}
+
+.bm-front,
+.bm-back {
+  width: 40px;
+  height: 80px;
+}
+
+.bm-left,
+.bm-right {
+  width: 26px;
+  height: 80px;
+}
+
+.bm-top,
+.bm-bottom {
+  width: 40px;
+  height: 26px;
+}
+
+.bm-front {
+  transform: translateZ(13px);
+}
+.bm-back {
+  transform: rotateY(180deg) translateZ(13px);
+}
+.bm-left {
+  transform: rotateY(-90deg) translateZ(13px);
+  left: 7px;
+}
+.bm-right {
+  transform: rotateY(90deg) translateZ(13px);
+  left: 7px;
+}
+.bm-top {
+  transform: rotateX(90deg) translateZ(40px);
+  top: 27px;
+}
+.bm-bottom {
+  transform: rotateX(-90deg) translateZ(40px);
+  top: 27px;
+}
+/* ======================================================
+            LEVEL
+====================================================== */
+.level-mini {
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(180deg, #00ffaa, #00ffff);
+  border-radius: 2px;
+  box-shadow:
+    0 0 12px #00ffaa,
+    0 0 20px rgba(0, 255, 255, 0.35);
+}
+
+/* ======================================================
+        CAP  ขั้วบวกด้านบนแบบ 3D ขนาดมินิ
+====================================================== */
+.cap-container-mini {
+  position: absolute;
+  top: -8px;
+  left: 11px;
+  width: 18px;
+  height: 8px;
+  transform-style: preserve-3d;
+}
+.cap-mini {
+  position: absolute;
+  background: #00ffff;
+  border: 1px solid black;
+}
+.cp-f,
+.cp-b {
+  width: 18px;
+  height: 8px;
+}
+.cp-l,
+.cp-r {
+  width: 10px;
+  height: 8px;
+}
+.cp-t {
+  width: 18px;
+  height: 10px;
+}
+.cp-f {
+  transform: translateZ(5px);
+}
+.cp-b {
+  transform: rotateY(180deg) translateZ(5px);
+}
+.cp-l {
+  transform: rotateY(-90deg) translateZ(9px);
+  left: 4px;
+}
+.cp-r {
+  transform: rotateY(90deg) translateZ(9px);
+  left: 4px;
+}
+.cp-t {
+  transform: rotateX(90deg) translateZ(5px);
+  top: -1px;
+}
+
+/* ======================================================
+   INNER BATTERY CORE
+====================================================== */
+.inner-battery {
+  position: absolute;
+
+  width: 90px;
+  height: 190px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%) translateZ(0px);
+
+  border: 2px solid rgba(0, 240, 255, 0.45);
+
+  border-radius: 14px;
+
+  background: rgba(0, 15, 35, 0.35);
+
+  box-shadow:
+    0 0 25px rgba(0, 240, 255, 0.25),
+    inset 0 0 25px rgba(0, 240, 255, 0.12);
+
+  backdrop-filter: blur(4px);
+
+  overflow: hidden;
+}
+
+/* BATTERY TOP */
+.inner-battery::before {
+  content: "";
+
+  position: absolute;
+
+  width: 36px;
+  height: 10px;
+
+  top: -12px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius: 6px 6px 0 0;
+
+  background: #00f0ff;
+
+  box-shadow: 0 0 12px #00f0ff;
+}
+
+/* ENERGY */
+.energy {
+  mix-blend-mode: screen;
+
+  position: absolute;
+
+  bottom: 0;
+
+  width: 100%;
+
+  height: 85%;
+
+  background: linear-gradient(to top, #00f0ff, #00ffaa, #00f0ff);
+
+  animation: energyMove 2s linear infinite;
+}
+
+@keyframes energyMove {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* ======================================================
+   FACE
+====================================================== */
+.cube-face {
+  position: absolute;
+
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(0, 20, 40, 0.88),
+    rgba(0, 10, 20, 0.72)
+  );
+
+  border: 1px solid rgba(0, 240, 255, 0.15);
+
+  overflow: hidden;
+
+  backdrop-filter: blur(5px);
+
+  box-shadow:
+    inset 0 0 40px rgba(0, 240, 255, 0.08),
+    0 0 25px rgba(0, 240, 255, 0.12);
+
+  transition: 0.3s ease;
+}
+/* ======================================================
+   FACE HOVER
+====================================================== */
+.cube-face:hover {
+  border: 1px solid rgba(0, 240, 255, 0.45);
+
+  box-shadow:
+    0 0 10px #00f0ff,
+    0 0 30px rgba(0, 240, 255, 0.5),
+    0 0 60px rgba(0, 240, 255, 0.2),
+    inset 0 0 25px rgba(0, 240, 255, 0.15);
+}
+/* ======================================================
+   POSITIONS กล่อง 3D
+====================================================== */
+.face-front {
+  transform: rotateY(0deg) translateZ(150px);
+}
+
+.face-back {
+  transform: rotateY(180deg) translateZ(150px);
+}
+
+.face-right {
+  transform: rotateY(90deg) translateZ(150px);
+}
+
+.face-left {
+  transform: rotateY(-90deg) translateZ(150px);
+}
+
+.face-top {
+  transform: rotateX(90deg) translateZ(150px);
+}
+
+.face-bottom {
+  transform: rotateX(-90deg) translateZ(150px);
+}
+
+/* ======================================================
+   BORDER EFFECT
+====================================================== */
+.flare-line {
+  stroke-dasharray: 50;
+
+  stroke-dashoffset: 400;
+
+  animation:
+    borderChase 3s linear infinite,
+    colorShift 2s linear infinite;
+}
+
+@keyframes borderChase {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes colorShift {
+  0% {
+    filter: hue-rotate(0deg) drop-shadow(0 0 10px #00f0ff);
+  }
+
+  50% {
+    filter: hue-rotate(180deg) drop-shadow(0 0 15px #ff00aa);
+  }
+
+  100% {
+    filter: hue-rotate(360deg) drop-shadow(0 0 10px #00f0ff);
+  }
+}
+
+/* ======================================================
+   CONTENT ด้านหน้าต่างๆ
+====================================================== */
+.face-content {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  flex-direction: column;
+
+  text-align: center;
+
+  padding: 20px;
+}
+
+/* ======================================================
+   TITLE
+====================================================== */
+.face-title {
+  color: #00f0ff;
+
+  font-size: 24px;
+
+  letter-spacing: 3px;
+
+  margin-bottom: 16px;
+
+  text-shadow: 0 0 10px #00f0ff;
+}
+
+/* ======================================================
+   VALUE
+====================================================== */
+.face-value {
+  font-size: 52px;
+
+  font-weight: bold;
+
+  margin-bottom: 14px;
+
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 10px #00f0ff,
+      0 0 20px #00f0ff;
+  }
+
+  50% {
+    text-shadow:
+      0 0 15px #ff00aa,
+      0 0 35px #ff00aa;
+  }
+}
+/* ======================================================
+   SUB
+====================================================== */
+.face-sub {
+  font-size: 13px;
+
+  line-height: 1.8;
+
+  letter-spacing: 2px;
+
+  opacity: 0.9;
+}
+/* ======================================================
+   BUTTON ROW
+====================================================== */
+.panel-row {
+  margin-top: 0px;
+
+  display: flex;
+
+  gap: 5px;
+
+  flex-wrap: wrap;
+
+  justify-content: center;
+}
+/* ======================================================
+   BUTTON
+====================================================== */
+.cube-btn {
+  min-width: 72px;
+
+  padding: 8px 10px;
+
+  border: 1px solid rgba(0, 240, 255, 0.2);
+
+  background: rgba(0, 20, 40, 0.45);
+
+  color: #9ffcff;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.cube-btn:hover {
+  color: #fff;
+
+  border-color: #00f0ff;
+
+  transform: translateY(-2px) scale(1.05);
+
+  box-shadow:
+    0 0 10px #00f0ff,
+    0 0 25px rgba(0, 240, 255, 0.5),
+    0 0 45px rgba(0, 240, 255, 0.2);
+}
+/* ======================================================
+   POPUP
+====================================================== */
+.popup {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: none;
+
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.75);
+
+  z-index: 999999;
+
+  overflow: hidden;
+}
+/* ======================================================
+   POPUP PANEL
+====================================================== */
+.popup-content {
+  position: relative;
+
+  width: 380px;
+
+  padding: 30px;
+
+  background: #07131f;
+
+  border: 1px solid #00f0ff;
+
+  border-radius: 20px;
+
+  z-index: 1000000;
+
+  pointer-events: auto;
+}
+/* ======================================================
+   INPUT
+====================================================== */
+.popup-content input {
+  width: 100%;
+
+  margin-bottom: 15px;
+
+  padding: 12px;
+
+  background: rgba(0, 25, 50, 0.65);
+
+  border: 1px solid rgba(0, 240, 255, 0.2);
+
+  color: #fff;
+
+  outline: none;
+}
+
+.popup-content input:focus {
+  border-color: #00f0ff;
+
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+}
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+@media (max-width: 768px) {
+  .scene {
+    transform: scale(1.25);
+  }
+
+  .title {
+    font-size: 12px;
+  }
+}
+/* ======================================================
+   PROFESSIONAL HOLOGRAM POPUP
+====================================================== */
+.popup {
+  position: fixed;
+
+  inset: 0;
+
+  display: none;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 240, 255, 0.08),
+    rgba(0, 0, 0, 0.82)
+  );
+
+  backdrop-filter: blur(12px);
+
+  z-index: 99999;
+
+  overflow: hidden;
+}
+
+/* ======================================================
+   POPUP CYBER GRID
+====================================================== */
+.popup::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+
+  background-size: 30px 30px;
+
+  animation: gridMove 10s linear infinite;
+}
+
+@keyframes gridMove {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(30px);
+  }
+}
+
+/* ======================================================
+   POPUP CYBER GRID
+====================================================== */
+.popup::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+
+  background-size: 30px 30px;
+
+  animation: gridMove 10s linear infinite;
+}
+
+@keyframes gridMove {
+  from {
+    transform: translateY(0px);
+  }
+
+  to {
+    transform: translateY(30px);
+  }
+}
+/* ======================================================
+                   TEXT
+====================================================== */
+
+.card-title {
+  font-size: 14px;
+  color: #6b5294;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(163, 130, 212, 0.2);
+  pointer-events: none;
+  text-align: center;
+  line-height: 1.2;
+  width: 100%;
+}
+
+.card-value,
+.footer-value,
+.bat-p,
+.bat-v {
+  outline: none;
+  cursor: text;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.card-value:focus,
+.footer-value:focus,
+.bat-p:focus,
+.bat-v:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.card-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
+.footer-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+}
+
+.footer-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  z-index: 10;
+}
+
+.footer-value {
+  font-size: 34px;
+  font-weight: bold;
+  color: #c7a7ff;
+  text-shadow: 0 0 15px rgba(199, 167, 255, 0.7);
+}
+
+.status-online {
+  color: #ff66ff;
+  text-shadow: 0 0 15px rgba(255, 0, 255, 0.85);
+}
+
+.status-connected {
+  color: #00ffff;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.85);
+}
+
+.blue-glow {
+  color: #c7a7ff;
+  text-shadow: 0 0 15px rgba(199, 167, 255, 0.7);
+}
+
+.cyan-glow {
+  color: #00ffff;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+}
+/* ======================================================
+   MAIN POPUP PANEL
+====================================================== */
+.popup-content {
+  position: relative;
+
+  z-index: 5;
+
+  width: 380px;
+
+  padding: 30px;
+
+  border-radius: 22px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(0, 20, 40, 0.92),
+    rgba(0, 10, 20, 0.82)
+  );
+
+  border: 1px solid rgba(0, 240, 255, 0.22);
+
+  overflow: hidden;
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 25px rgba(0, 240, 255, 0.15),
+    0 0 80px rgba(0, 240, 255, 0.08),
+    inset 0 0 40px rgba(0, 240, 255, 0.06);
+
+  animation: holoPopup 0.35s ease;
+}
+
+/* ======================================================
+   POPUP ENTER
+====================================================== */
+@keyframes holoPopup {
+  0% {
+    transform: scale(0.7) translateY(50px);
+
+    opacity: 0;
+
+    filter: blur(10px);
+  }
+
+  100% {
+    transform: scale(1) translateY(0px);
+
+    opacity: 1;
+
+    filter: blur(0px);
+  }
+}
+/* ======================================================
+   HOLOGRAM EDGE LIGHT
+====================================================== */
+.popup-content::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -2px;
+
+  border-radius: 22px;
+
+  padding: 1px;
+
+  background: linear-gradient(45deg, #00f0ff, #ff00aa, #00f0ff);
+
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  animation: borderRotate 4s linear infinite;
+}
+
+@keyframes borderRotate {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+/* ======================================================
+   POPUP TITLE
+====================================================== */
+.popup-title {
+  position: relative;
+
+  color: #00f0ff;
+
+  font-size: 22px;
+
+  letter-spacing: 4px;
+
+  margin-bottom: 28px;
+
+  text-align: center;
+
+  text-shadow:
+    0 0 10px #00f0ff,
+    0 0 25px rgba(0, 240, 255, 0.5);
+}
+/* ======================================================
+   HOLOGRAM INPUT
+====================================================== */
+.popup-content input {
+  width: 100%;
+
+  margin-bottom: 18px;
+
+  padding: 14px 16px;
+
+  border-radius: 12px;
+
+  border: 1px solid rgba(0, 240, 255, 0.18);
+
+  background: rgba(0, 25, 55, 0.45);
+
+  color: #ffffff;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition: 0.25s ease;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.04);
+}
+
+/* ======================================================
+   INPUT FOCUS
+====================================================== */
+.popup-content input:focus {
+  border-color: #00f0ff;
+
+  transform: scale(1.02);
+
+  box-shadow:
+    0 0 18px rgba(0, 240, 255, 0.35),
+    inset 0 0 18px rgba(0, 240, 255, 0.08);
+}
+/* ======================================================
+   BUTTON ZONE
+====================================================== */
+.popup-buttons {
+  margin-top: 12px;
+
+  display: flex;
+
+  gap: 12px;
+
+  justify-content: center;
+}
+/* ======================================================
+   BUTTON STYLE
+====================================================== */
+.popup-btn {
+  padding: 12px 20px;
+
+  margin-top: 10px;
+
+  margin-right: 10px;
+
+  border: none;
+
+  background: #00f0ff;
+
+  color: #000;
+
+  cursor: pointer;
+
+  font-weight: bold;
+
+  pointer-events: auto;
+
+  position: relative;
+
+  z-index: 1000001;
+}
+/* ======================================================
+   BUTTON HOVER
+====================================================== */
+.popup-btn:hover {
+  pointer-events: auto;
+  transform: translateY(-2px) scale(1.04);
+
+  border-color: #00f0ff;
+
+  box-shadow:
+    0 0 15px #00f0ff,
+    0 0 35px rgba(0, 240, 255, 0.35);
+
+  background: rgba(0, 50, 90, 0.75);
+}
+/* ======================================================
+   PROFESSIONAL 3D BATTERY
+====================================================== */
+.inner-battery {
+  position: absolute;
+
+  width: 110px;
+  height: 220px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%) translateZ(0px);
+
+  transform-style: preserve-3d;
+
+  border-radius: 24px;
+
+  border: 2px solid rgba(0, 240, 255, 0.35);
+
+  background: linear-gradient(
+    145deg,
+    rgba(0, 15, 35, 0.92),
+    rgba(0, 5, 15, 0.88)
+  );
+
+  overflow: hidden;
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 0 40px rgba(0, 240, 255, 0.18),
+    inset 0 0 35px rgba(0, 240, 255, 0.08);
+
+  animation: coreFloat 4s ease-in-out infinite;
+}
+
+/* ======================================================
+   FLOAT
+====================================================== */
+@keyframes coreFloat {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateZ(0px) rotateY(0deg);
+  }
+
+  50% {
+    transform: translate(-50%, -52%) translateZ(10px) rotateY(4deg);
+  }
+}
+
+/* ======================================================
+   BATTERY TOP CAP
+====================================================== */
+.inner-battery::before {
+  content: "";
+
+  position: absolute;
+
+  width: 44px;
+  height: 12px;
+
+  top: -14px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius: 8px 8px 0 0;
+
+  background: #00f0ff;
+
+  box-shadow:
+    0 0 15px #00f0ff,
+    0 0 35px rgba(0, 240, 255, 0.5);
+}
+
+/* ======================================================
+   INNER ENERGY
+====================================================== */
+.energy {
+  position: absolute;
+
+  bottom: 0;
+
+  width: 100%;
+
+  height: 88%;
+
+  border-radius: 18px;
+
+  background: linear-gradient(to top, #00f0ff, #00ffaa, #00f0ff, #9d00ff);
+
+  animation: energyWave 3s linear infinite;
+
+  box-shadow:
+    inset 0 0 25px rgba(255, 255, 255, 0.15),
+    0 0 25px rgba(0, 240, 255, 0.35);
+}
+
+/* ======================================================
+   ENERGY ANIMATION
+====================================================== */
+@keyframes energyWave {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+
+  50% {
+    filter: hue-rotate(120deg) brightness(1.2);
+  }
+
+  100% {
+    filter: hue-rotate(360deg) brightness(1);
+  }
+}
+
+/* ======================================================
+   BATTERY LIGHT EFFECT
+====================================================== */
+.energy::before {
+  mix-blend-mode: screen;
+
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+
+  mix-blend-mode: screen;
+
+  animation: energyFlow 2s linear infinite;
+}
+
+@keyframes energyFlow {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* ======================================================
+   BATTERY INNER CORE
+====================================================== */
+.energy::after {
+  content: "";
+
+  position: absolute;
+
+  width: 60%;
+
+  height: 100%;
+
+  left: 20%;
+
+  background: radial-gradient(rgba(255, 255, 255, 0.35), transparent 70%);
+
+  filter: blur(18px);
+  opacity: 0.7;
+  mix-blend-mode: screen;
+}
+
+/* ======================================================
+   FRONT SCAN SYSTEM
+====================================================== */
+.scan-line {
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 3px;
+
+  background: #00f0ff;
+
+  box-shadow:
+    0 0 12px #00f0ff,
+    0 0 30px rgba(0, 240, 255, 0.5);
+
+  animation: scanMoveFront 2s linear infinite;
+
+  z-index: 2;
+}
+
+@keyframes scanMoveFront {
+  0% {
+    top: 0%;
+  }
+
+  100% {
+    top: 100%;
+  }
+}
+
+/* ======================================================
+   LIVE LOCATION
+====================================================== */
+.live-location {
+  position: absolute;
+
+  bottom: 20px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: 12px;
+
+  letter-spacing: 2px;
+
+  color: #00f0ff;
+
+  text-align: center;
+
+  text-shadow: 0 0 10px #00f0ff;
+}
+
+/* ======================================================
+   BLE STATUS
+====================================================== */
+#bleStatus {
+  animation: bleGlow 2s infinite;
+}
+
+@keyframes bleGlow {
+  0%,
+  100% {
+    opacity: 1;
+
+    text-shadow: 0 0 10px #00f0ff;
+  }
+
+  50% {
+    opacity: 0.7;
+
+    text-shadow: 0 0 20px #ff00aa;
+  }
+}
+
+/* ======================================================
+   MOTOR ENERGY FLOW
+====================================================== */
+.face-back::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 240, 255, 0.08),
+    transparent
+  );
+
+  animation: energyFlowMotor 2s linear infinite;
+
+  pointer-events: none;
+}
+
+@keyframes energyFlowMotor {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ======================================================
+   AI CORE GLOW
+====================================================== */
+.face-top {
+  animation: aiPulse 4s infinite;
+}
+
+@keyframes aiPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(255, 0, 170, 0.35);
+  }
+}
+
+/* ======================================================
+   SYSTEM CORE LIGHT
+====================================================== */
+.face-bottom {
+  overflow: hidden;
+}
+
+.face-bottom::before {
+  content: "";
+
+  position: absolute;
+
+  width: 200%;
+
+  height: 40px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 240, 255, 0.12),
+    transparent
+  );
+
+  top: 50%;
+
+  left: -100%;
+
+  transform: translateY(-50%);
+
+  animation: systemSweep 3s linear infinite;
+}
+
+@keyframes systemSweep {
+  100% {
+    left: 100%;
+  }
+}
+/*=============}*=================/
+
+/* ======================================================
+   MAP GRID
+====================================================== */
+.mapCard {
+  height: 350px;
+  border-radius: 25px;
+  overflow: hidden;
+  margin-top: 30px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
+}
+
+.live-location {
+  position: relative;
+}
+.leaflet-map-pane {
+  position: relative;
+}
+#map,
+.leaflet-container,
+.leaflet-map-pane {
+  top: 25px !important;
+  margin-top: 15px !important;
+  width: 100%;
+  height: 100%;
+
+  background: #001018;
+  pointer-events: none !important;
+  height: calc(100% - 15px) !important;
+}
+
+.leaflet-overlay-pane .radar-map-wrap,
+.leaflet-marker-pane .radar-map-wrap {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  /* เพิ่ม scale(1) เพื่อเตรียมสเกลตามแผนที่ */
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+}
+.leaflet-zoom-animated .radar-map-wrap {
+  transform-origin: center !important;
+}
+
+/* ปรับให้ขนาดวงกลมตอบสนองต่อการย่อขยายพิกัด */
+.leaflet-zoom-animated .radar-map-ring {
+  transform-origin: center !important;
+}
+
+.brand-panel {
+  background: #1e1b4b;
+  padding: 12px;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  border: 1px solid #6366f1;
+}
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.45;
+}
+/* ======================================================
+   RADAR RING วงกลมย่อย MAP
+====================================================== */
+.radar-map-ring {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  border-radius: 50%;
+
+  border: 2px solid rgba(0, 240, 255, 0.35);
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+}
+.radar-map-ring-1 {
+  width: 50px;
+  height: 50px;
+
+  animation: radar-mapPulse 2s infinite;
+}
+
+.radar-map-ring-2 {
+  width: 120px;
+  height: 120px;
+
+  animation: radar-mapPulse 3s infinite;
+}
+
+.radar-map-ring-3 {
+  width: 180px;
+  height: 180px;
+
+  animation: radar-mapPulse 4s infinite;
+}
+
+@keyframes radar-mapPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+
+    opacity: 0;
+  }
+}
+
+/* ======================================================
+   GPS PANEL
+====================================================== */
+.gps-panel {
+  position: absolute;
+
+  bottom: 20px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: 13px;
+
+  letter-spacing: 2px;
+
+  color: #00f0ff;
+
+  text-shadow: 0 0 12px #00f0ff;
+
+  text-align: center;
+}
+
+/* ======================================================
+   FRONT
+====================================================== */
+.face-front {
+  /*position:relative;*/
+  overflow: hidden;
+}
+
+/* ======================================================
+   MAP LAYER
+====================================================== */
+.map-layer {
+  position: relative !important; /* เปลี่ยนจาก absolute เป็น relative */
+  width: 100%;
+  height: 100%;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1;
+}
+/* ======================================================
+   MAP
+====================================================== */
+.live-location {
+  position: relative;
+}
+.leaflet-map-pane {
+  position: relative;
+}
+
+#map,
+.leaflet-container,
+.leaflet-map-pane {
+  top: 10px !important;
+  margin-top: 15px !important;
+  width: 100%;
+  height: 100%;
+
+  background: #001018;
+  pointer-events: none !important;
+  height: calc(100% - 15px) !important;
+}
+.leaflet-overlay-pane .radar-map-wrap,
+.leaflet-marker-pane .radar-map-wrap {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  /* เพิ่ม scale(1) เพื่อเตรียมสเกลตามแผนที่ */
+  transform: translate(-50%, -50%) scale(1) !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+}
+.leaflet-zoom-animated .radar-map-wrap {
+  transform-origin: center !important;
+}
+
+/* ปรับให้ขนาดวงกลมตอบสนองต่อการย่อขยายพิกัด */
+.leaflet-zoom-animated .radar-map-ring {
+  transform-origin: center !important;
+}
+/* ======================================================
+   MAP GRID
+====================================================== */
+.map-grid {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 3;
+
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.06) 1px, transparent 1px);
+
+  background-size: 30px 30px;
+}
+/* ======================================================
+   GPS TEXT
+====================================================== */
+.live-location {
+  color: #00f0ff;
+
+  text-shadow: 0 0 10px #00f0ff;
+}
+
+.ev-inner-circle-holder {
+  transform: translateZ(1px);
+  overflow: hidden; /* ซ่อนสิ่งที่ล้นออกนอกขอบกล่องวงกลม */
+  overflow: hidden !important;
+}
+.ev-inner-circle-holder::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 340px; /* ขนาดของวงกลมที่ใหญ่กว่าขอบกล่อง */
+  height: 340px; /* ขนาดของวงกลมที่ใหญ่กว่าขอบกล่อง */
+  background: radial-gradient(
+    circle,
+    rgba(0, 240, 255, 0.1) 0%,
+    rgba(0, 240, 255, 0) 70%
+  );
+  transform: translate(-50%, -50%);
+  animation: radar-mapPulse 3s infinite;
+  overflow: hidden !important;
+}
+/* ======================================================
+    RADA SCAN MAP
+====================================================== */
+.map-radar-sweep {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 120% !important;
+  pointer-events: none !important; /* สั่งทะลุผ่านเพื่อจิ้มควบคุมแผนที่ด้านหลังได้ปกติ */
+  z-index: 999 !important; /* อยู่ด้านบนแผนที่ แต่อยู่ใต้กล่องข้อความพิกัด GPS */
+  background: conic-gradient(
+    from 0deg,
+    rgba(174, 0, 255, 0.35) 0deg,
+    /* แสงปลายกรวยที่สว่างที่สุด */ rgba(0, 0, 0, 0.05) 45deg,
+
+    /* แสงจางไล่มิติ */ transparent 90deg,
+    transparent 360deg
+  ) !important;
+  animation: mapRadarRotation 3s linear infinite !important;
+}
+@keyframes mapRadarRotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* ======================================================
+     ไม้ตายแบบง่าย: เมื่อการ์ดใดๆ ถูกกดซูมขยายเต็มจอ
+====================================================== */
+.fullscreen-zoom {
+  position: fixed !important; /* บังคับลอยตัวเหนือทุกสิ่งในหน้าจอ */
+  top: 50% !important; /* ดึงขอบบนลงมาที่กึ่งกลาง 50% */
+  left: 50% !important; /* ดึงขอบซ้ายไปที่กึ่งกลาง 50% */
+  /* ใช้ไม้ตายดึงจุดศูนย์กลางของกล่องให้ทับกึ่งกลางจอพอดีเป๊ะ */
+  transform: translate(-50%, -50%) !important;
+  z-index: 999999 !important; /* อยู่ชั้นบนสุดไม่โดนแผงอื่นบัง */
+
+  margin: 0 !important; /* เคลียร์ระยะห่างเก่าที่ทำให้เยื้องศูนย์ออกให้หมด */
+  width: 900px !important; /* 👈 สามารถปรับตัวเลขความกว้างตอนขยายได้ตามใจชอบตรงนี้ครับ */
+  height: auto !important;
+  box-sizing: border-box !important;
+}
+
+.card.fullscreen-zoom {
+  background: rgba(
+    13,
+    6,
+    26,
+    0.98
+  ) !important; /* ทำพื้นหลังตอนขยายให้เข้มขึ้นเพื่อให้อ่านง่าย */
+  box-shadow: 0 0 50px rgba(0, 200, 255, 0.5) !important; /* สาดเงานีออนสีฟ้ากระจายรอบวงกว้าง */
+  border-color: #00ffff !important; /* เปลี่ยนเส้นขอบเป็นสีฟ้านีออนตอนขยาย */
+}
+/* ======================================================
+             RESPONSIVE
+====================================================== */
+@media (max-width: 1200px) {
+  .dashboard {
+    transform: scale(0.82);
+    transform-origin: top center;
+  }
+  body {
+    overflow: auto;
+  }
+}
+/* ======================================================
+   ดันไฟวิ่งรอบกล่องให้ลอยเหนือแผนที่ (MAP FACE BORDER LIGHT)
+====================================================== */
+.cube-face .face-svg {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 99999 !important; /* ค่าสูงมากเพื่อทะลุแผนที่ขึ้นมา */
+  pointer-events: none !important; /* ป้องกันไม่ให้บังปุ่มกดบนแผนที่ */
+}
+.flare-line {
+  z-index: 99999 !important;
+}
+#map {
+  width: calc(100% - 6px) !important;
+  height: calc(
+    100% - 31px
+  ) !important; /* ลบ 31px เผื่อระยะที่หดหนีเพดานด้านบนไว้แล้ว */
+  margin: 3px !important; /* เว้นระยะห่างรอบทิศทางเข้ามา */
+}
+/* ======================================================
+   FIX SVG FLARE LINE TO LOOP ALL 4 SIDES (แสงวิ่งครบรอบสี่เหลี่ยม)
+====================================================== */
+/* 1. บังคับให้หน้ากาก SVG เปิดพื้นที่แสดงผลเต็มพิกัด ไม่ตัดส่วนขอบทิ้ง */
+.cube-face .face-svg {
+  overflow: visible !important;
+}
+/* 2. ดัดพิกัดแท็กสี่เหลี่ยมด้านใน SVG ให้กางขนาดพอดีกับกรอบ 100% สัดส่วนไม่ล้นหน้าจอ */
+.cube-face .face-svg rect.flare-line {
+  x: 0.5% !important;
+  y: 0.5% !important;
+  width: 99% !important;
+  height: 99% !important;
+  stroke-width: 2px !important; /* ปรับความหนาของเส้นไฟวิ่งให้เด่นชัดขึ้น */
+}
+/* 3. ปรับระยะเว้นของแผนที่ด้านในให้หดหลบเส้นไฟวิ่งด้านล่างและด้านข้างเพิ่มเติม */
+#map {
+  width: calc(100% - 10px) !important;
+  height: calc(100% - 35px) !important;
+  margin: 25px 5px 5px 5px !important; /* เว้นระยะ บน ขวา ล่าง ซ้าย หลบเส้นไฟทุกด้าน */
+}
+/* ======================================================
+   REMOVE BLUE SCAN LINE MAP (สั่งซ่อนเส้นตรงสีฟ้าบนหน้าแผนที่)
+====================================================== */
+.cube-face .scan-line {
+  display: none !important; /* สั่งซ่อนเส้นตรงสีฟ้าทิ้งทันที */
+}
+/* ======================================================
+   AUTO-CENTER FOR ALL DEVICES (จัดกึ่งกลางหน้าจอทุกอุปกรณ์)
+====================================================== */
+/* 1. สั่งให้ตัวหน้าเว็บหลักขยายเต็มพื้นที่ และบังคับจัดกึ่งกลางทั้งแนวตั้งและแนวนอน */
+html,
+body {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  /* ใช้เทคโนโลยี Flexbox บังคับวัตถุด้านในดีดเข้าตรงกลางจอ */
+  display: flex !important;
+  align-items: center !important; /* จัดกึ่งกลางแนวตั้ง (บน-ล่าง) */
+  justify-content: center !important; /* จัดกึ่งกลางแนวนอน (ซ้าย-ขวา) */
+
+  background: #03060f; /* สีพื้นหลังมืดๆ ให้เข้ากับธีมไซไฟ */
+  overflow: hidden !important; /* ป้องกันไม่ให้เกิดแถบเลื่อน Scrollbar ตอนหดจอ */
+}
+
+/* 2. สั่งให้กล่องโครงสร้างหลักของคิวบ์ทรงตัวอยู่ตรงกึ่งกลางเสมอ ไม่ว่าจะหดหรือขยายจอ */
+.cube-face {
+  margin: auto !important;
+}
+
+/* 3. สั่งให้แผนที่ Leaflet รับรู้และปรับขนาดพิกัดกึ่งกลางตามขนาดจอที่เปลี่ยนไปอัตโนมัติ */
+#map {
+  position: relative !important;
+}
+
+/* ======================================================
+          ป้ายข้อมูลและตัวเลขดิจิทัลสำหรับเอฟเฟกต์ซูมเข้า-ออก
+====================================================== */
+.blip-card {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  background: rgba(3, 6, 15, 0.9);
+  border: 1px solid #fffb00;
+  border-radius: 4px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(255, 251, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: bottom center;
+  pointer-events: auto;
+  color: #fffb00;
+}
+.blip:hover .blip-card {
+  transform: translateX(-50%) scale(1.15);
+  box-shadow: 0 0 15px #fffb00;
+  background: #fffb00;
+  color: #03060f;
+  z-index: 999;
+}
+.card-name {
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+.card-mac {
+  font-size: 9px;
+  opacity: 0.8;
+  font-family: monospace;
+}
+.blip:hover .card-mac {
+  color: #03060f;
+  opacity: 1;
+}
