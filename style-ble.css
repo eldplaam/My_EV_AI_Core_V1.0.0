@@ -534,29 +534,4 @@ select {
     transform: rotate(360deg);
   }
 }
-@media (max-width: 768px) {
-  .face-front {
-    transform: rotateY(0deg) translateZ(80px) !important;
-  }
-  .face-back {
-    transform: rotateY(180deg) translateZ(80px) !important;
-  }
-  .face-right {
-    transform: rotateY(90deg) translateZ(80px) !important;
-  }
-  .face-left {
-    transform: rotateY(-90deg) translateZ(80px) !important;
-  }
-  .face-top {
-    transform: rotateX(90deg) translateZ(80px) !important;
-  }
-  .face-bottom {
-    transform: rotateX(-90deg) translateZ(80px) !important;
-  }
 
-  /* แถม: สั่งหดหน้ากล่องให้เล็กลงมาเหลือตัวเลขที่พอดีกับมือถือ */
-  [class^="face-"] {
-    width: 160px !important;
-    height: 160px !important;
-  }
-}
