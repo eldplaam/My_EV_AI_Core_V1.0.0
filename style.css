@@ -25,6 +25,7 @@ body {
   align-items: center;
   flex-direction: column;
   overflow-x: hidden; /* ✅ เพิ่ม: บล็อกไม่ให้หน้าเว็บไถลไปด้านข้างเมื่อซูมเข้า */
+  overflow-y: hidden;
 
   background: #01040a;
   background-image:
@@ -89,7 +90,7 @@ body::before {
    AUTO-CENTER FOR ALL DEVICES (จัดกึ่งกลางหน้าจอทุกอุปกรณ์)
 ====================================================== */
 /* 1. สั่งให้ตัวหน้าเว็บหลักขยายเต็มพื้นที่ และบังคับจัดกึ่งกลางทั้งแนวตั้งและแนวนอน */
-/* 1. ตั้งค่าฐานของหน้าเว็บให้ยืดหยุ่น */
+/* ตั้งค่าฐานระบบ */
 html {
   width: 100%;
   height: 100%;
@@ -97,33 +98,88 @@ html {
 
 body {
   width: 100%;
-  /* ✅ แก้จาก height เป็น min-height: เพื่อให้ยืดลงล่างได้อัตโนมัติเวลาคนกดซูมเข้าจนเนื้อหาล้น */
   min-height: 100vh;
   margin: 0;
   padding: 0;
-
   display: flex;
-  align-items: center; /* จัดกึ่งกลางแนวตั้ง */
-  justify-content: center; /* จัดกึ่งกลางแนวนอน */
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
-
-  background: #03060f;
-
-  /* ✅ แก้จาก overflow: hidden เป็น overflow-x: hidden เพื่อล็อกไม่ให้จอส่ายซ้ายขวาตอนซูม แต่ยังยอมให้เลื่อนลงล่างได้ถ้าเนื้อหาล้น */
   overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  perspective: 1600px;
+  color: #dfffff;
+  background: #03060f; /* สีพื้นหลังฐาน */
 }
 
-/* 2. วิธีคุมไม่ให้หน้าเว็บพังเวลาซูม (ให้สร้างกล่อง Wrapper คลุมเนื้อหาทั้งหมดไว้อีกที) */
+/* ✅ กล่องฉากหลังที่แยกออกมา: แก้ปัญหาสีกระตุกบนมือถือ */
+.scifi-background-layer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* ส่งไปอยู่หลังสุด */
+  pointer-events: none; /* ห้ามบังการคลิกปุ่ม */
+
+  /* ย้ายลายตารางทั้งหมดมาไว้ที่นี่ */
+  background-image:
+    radial-gradient(rgba(0, 240, 255, 0.12) 1.5px, transparent 0),
+    linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
+  background-size:
+    40px 40px,
+    20px 20px,
+    20px 20px;
+
+  /* บังคับให้การ์ดจอมือถือประมวลผลแยกเลเยอร์ จะลื่นไหลขึ้น 10 เท่า */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* เอฟเฟกต์เส้นสแกน (ถ้าต้องการใช้ร่วมด้วย) */
+.scifi-background-layer::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.015) 0.06rem,
+    transparent 0.12rem,
+    transparent 0.24rem
+  );
+  animation: scanMove 12s linear infinite; /* ปรับให้ช้าลงหน่อยเพื่อความเนียนตาบนมือถือ */
+}
+
+@keyframes scanMove {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(20px);
+  }
+}
+
+/* กล่องควบคุมเนื้อหาหลัก */
 .main-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  width: 100%;
-  max-width: 1200px; /* ✅ บล็อกความกว้างสูงสุดบนจอคอม */
-  padding: 2rem; /* ✅ เว้นช่องว่างขอบจอเวลารันบนมือถือ */
-  box-sizing: border-box;
+}
+.card-container {
+  transform-origin: center center; /* หมุนรอบกึ่งกลางทั้งแนวตั้งและแนวนอน */
+  transform-style: preserve-3d; /* เปิดโหมด 3D ให้มองเห็นมิติหน้าหลัง */
+  position: relative;
 }
 
 /* ======================================================
@@ -790,4 +846,17 @@ body {
   100% {
     filter: hue-rotate(360deg) brightness(1);
   }
+}
+/* ทั้งด้านหน้าและด้านหลังต้องใช้โค้ดชุดนี้ */
+.front,
+.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* กว้างเท่ากล่องหลัก */
+  height: 100%; /* สูงเท่ากล่องหลัก */
+  backface-visibility: hidden; /* ซ่อนด้านกลับเมื่อพลิกไปข้างหลัง */
+}
+.back {
+  transform: rotateY(180deg); /* พลิกกลับด้านหลังให้อยู่ที่แกนเดิม */
 }
