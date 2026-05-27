@@ -17,11 +17,15 @@
    BODY
 ====================================================== */
 body {
-  width: 100vw;
-  height: 100vh;
+  display: flex; /* ✅ เพิ่ม: เพื่อให้จัดกึ่งกลางหน้าจอได้จริง */
+  width: 100%; /* ✅ แก้ไข: ป้องกันจอกระตุกหรือเกิดแถบเลื่อนแนวนอน */
+  min-height: 100vh; /* ✅ แก้ไข: เพื่อให้หน้าจอยืดลงด้านล่างได้เวลาคนกดซูมเข้า */
+
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow-x: hidden; /* ✅ เพิ่ม: บล็อกไม่ให้หน้าเว็บไถลไปด้านข้างเมื่อซูมเข้า */
+
   background: #01040a;
   background-image:
     radial-gradient(rgba(0, 240, 255, 0.12) 1.5px, transparent 0),
@@ -31,9 +35,12 @@ body {
     40px 40px,
     20px 20px,
     20px 20px;
+  background-attachment: fixed; /* ✅ เพิ่ม: ล็อกให้ลายตารางอยู่กับที่ ไม่เลื่อนหลุดตำแหน่ง */
+
   font-family: Arial, Helvetica, sans-serif;
   perspective: 1600px;
   color: #dfffff;
+  margin: 0; /* ✅ เพิ่ม: ล้างขอบขาวของเบราว์เซอร์ออกให้เต็มจอ */
 }
 /* ======================================================
    SCANLINE
@@ -41,49 +48,96 @@ body {
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  /* ✅ แก้ไข: ขยายขอบด้านบนและล่างออกไปเล็กน้อย เผื่อพื้นที่ให้แอนิเมชันขยับ จะได้ไม่เห็นขอบตัดตอนซูม */
+  top: -20px;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+
+  /* ✅ แก้ไข: เปลี่ยนหน่วยใน Gradient เป็น rem เพื่อให้เส้นสแกนขยายใหญ่ตามสัดส่วนเวลาคนกดซูมหน้าเว็บ */
   background: repeating-linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.015),
-    rgba(255, 255, 255, 0.015) 1px,
-    transparent 2px,
-    transparent 4px
+    rgba(255, 255, 255, 0.015) 0.06rem,
+    transparent 0.12rem,
+    transparent 0.24rem
   );
+
   pointer-events: none;
   animation: scanMove 8s linear infinite;
+  z-index: 999; /* ✅ แนะนำ: ใส่เพื่อให้เส้นสแกนทับอยู่บนทุกเลเยอร์ของหน้าเว็บเพิ่มความสมจริง */
 }
+
 @keyframes scanMove {
   from {
     transform: translateY(0);
   }
   to {
+    /* ✅ สัมพันธ์กับขอบ top/bottom ที่ขยายเผื่อไว้ */
     transform: translateY(20px);
+  }
+}
+@keyframes scanMoveAlternate {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 40px;
   }
 }
 /* ======================================================
    AUTO-CENTER FOR ALL DEVICES (จัดกึ่งกลางหน้าจอทุกอุปกรณ์)
 ====================================================== */
 /* 1. สั่งให้ตัวหน้าเว็บหลักขยายเต็มพื้นที่ และบังคับจัดกึ่งกลางทั้งแนวตั้งและแนวนอน */
-html,
-body {
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: center !important; /* จัดกึ่งกลางแนวตั้ง (บน-ล่าง) */
-  justify-content: center !important; /* จัดกึ่งกลางแนวนอน (ซ้าย-ขวา) */
-
-  background: #03060f; /* สีพื้นหลังมืดๆ ให้เข้ากับธีมไซไฟ */
-  overflow: hidden !important; /* ป้องกันไม่ให้เกิดแถบเลื่อน Scrollbar ตอนหดจอ */
+/* 1. ตั้งค่าฐานของหน้าเว็บให้ยืดหยุ่น */
+html {
+  width: 100%;
+  height: 100%;
 }
+
+body {
+  width: 100%;
+  /* ✅ แก้จาก height เป็น min-height: เพื่อให้ยืดลงล่างได้อัตโนมัติเวลาคนกดซูมเข้าจนเนื้อหาล้น */
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+  justify-content: center; /* จัดกึ่งกลางแนวนอน */
+  flex-direction: column;
+
+  background: #03060f;
+
+  /* ✅ แก้จาก overflow: hidden เป็น overflow-x: hidden เพื่อล็อกไม่ให้จอส่ายซ้ายขวาตอนซูม แต่ยังยอมให้เลื่อนลงล่างได้ถ้าเนื้อหาล้น */
+  overflow-x: hidden;
+}
+
+/* 2. วิธีคุมไม่ให้หน้าเว็บพังเวลาซูม (ให้สร้างกล่อง Wrapper คลุมเนื้อหาทั้งหมดไว้อีกที) */
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 1200px; /* ✅ บล็อกความกว้างสูงสุดบนจอคอม */
+  padding: 2rem; /* ✅ เว้นช่องว่างขอบจอเวลารันบนมือถือ */
+  box-sizing: border-box;
+}
+
 /* ======================================================
    SCENE
 ====================================================== */
 .scene {
-  width: 260px;
-  height: 350px;
+  width: 200px;
+  height: 200px;
   transform-style: preserve-3d;
+}
+.card {
+  width: 90%; /* กว้างตามหน้าจอมือถือ */
+  max-width: 500px; /* แต่ใหญ่สุดในจอคอมไม่เกิน 500px */
+  padding: 2rem; /* เว้นระยะห่างด้านในแบบยืดหยุ่นตามการซูม */
 }
 /* ======================================================
    CUBE
@@ -627,8 +681,8 @@ body {
 .inner-battery {
   position: absolute;
 
-  width: 110px;
-  height: 220px;
+  width: 60px;
+  height: 100px;
 
   left: 50%;
   top: 50%;
