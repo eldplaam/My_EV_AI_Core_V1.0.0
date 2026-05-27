@@ -6,6 +6,7 @@
     <title>My_EV_AI_Core_V1.0.0</title>
     <!-- [ข้อ 4] เชื่อมโยงไฟล์ CSS ตรงนี้ -->
 
+    <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="style-map.css" />
     <link rel="stylesheet" href="style-ble.css" />
 
@@ -69,8 +70,7 @@
           <div class="live-location">
             <!-- ปรับแก้ไขจุดนี้: เพิ่มคำสั่งควบคุมเพื่อไม่ให้โครงสร้างบิดเบี้ยว -->
             <div
-              class="map-layer"
-              class="map-container"
+              class="map-layer map-container"
               onclick="zoomElement(event, this)"
               style="
                 padding: 1px;
@@ -123,7 +123,7 @@
 
           <!-- ย้ายกลุ่มเดิมตรงนี้ออกไปแล้ว -->
 
-          <svg class="face-svg" viewBox="0 0 100 100">
+          <svg class="face-svg" viewbox="0 0 100 100">
             <rect
               x="2"
               y="2"
@@ -150,9 +150,9 @@
 ======================================= -->
         <div class="cube-face face-right">
           <!-- ==========START SVG FRAME======== -->
-          <svg class="face-svg" viewBox="0 0 100 100">
+          <svg class="face-svg" viewbox="0 0 100 100">
             <defs>
-              <linearGradient id="cubeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <lineargradient id="cubeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#00f0ff" />
 
                 <stop offset="50%" stop-color="#ba00ff" />
@@ -185,10 +185,8 @@
             <div class="face-value" id="batteryValue">92%</div>
             <div class="face-value" id="batteryValue"></div>
             <div class="panel-row">
-              <div class="brand-ble-panel">
-                <label-ble style="color: #a5b4fc; margin-top: 0">
-                  📡
-                </label-ble>
+              <div class="brand-panel">
+                <label style="color: #a5b4fc; margin-top: 0"> 📡 </label>
                 <select id="controllerBrand" onchange="switchBrandSettings()">
                   <option value="APT">🟢 APT安沛动力 (Original BLE)</option>
                   <option value="APT_LOT">🟢 APT Smart Match</option>
@@ -316,7 +314,7 @@
         <!-- =======TOP =========================
 ======================================= -->
         <div class="cube-face face-top">
-          <svg class="face-svg" viewBox="0 0 100 100">
+          <svg class="face-svg"viewBox="0 0 100 100">
             <rect
               x="2"
               y="2"
@@ -439,6 +437,7 @@
     </svg>
 
     <!-- [ข้อ 4] เชื่อมโยงไฟล์ JavaScript ตรงนี้ -->
+     <script src="script.js"></script>
     <script src="script-map.js"></script>
     <script src="script-ble.js"></script>
   </body>

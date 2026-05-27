@@ -21,7 +21,7 @@
 .radar-ble-button {
   padding: 5px 5px;
 
-  font-size: 10px;
+  font-size: 12px;
 
   background: transparent;
 
@@ -45,7 +45,7 @@
 
   font-family: inherit;
 
-  width: 35%;
+  width: 45%;
 
   margin-bottom: 10px;
 }
@@ -67,12 +67,13 @@
 }
 
 .radar-ble-screen {
-  width: 70%;
-  height: 70%;
-  top: -25px;
-  right: -45px;
+  width: 65%;
 
-  border: 1px solid #00f0ff;
+  height: 65%;
+  top: -25px;
+  right: -60px;
+
+  border: 3px solid #00f0ff;
 
   border-radius: 50%;
 
@@ -368,30 +369,13 @@
   box-shadow: 0 0 20px rgba(0, 242, 254, 0.2); /* เอฟเฟกต์เรืองแสงอ่อนๆ */
   backdrop-filter: blur(10px); /* เอฟเฟกต์กระจกฝ้าด้านหลังกล่อง */
 }
-.brand-ble-panel {
+.brand-panel {
   margin: 0;
   margin-top: 15px;
   margin-bottom: -5px;
   padding: 2px;
   border-radius: 12px 12px 0 0;
   border: 1px solid hsl(143, 83%, 12%);
-}
-.label-ble {
-  display: block;
-  margin-top: 15px;
-  margin-bottom: 4px;
-  color: #94a3b8;
-  font-size: 12px;
-}
-
-input,
-select {
-  width: 90%;
-  padding: 10px;
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: white;
-  border-radius: 8px;
 }
 /* =========================================================
    1. ตัวกล่องหลัก (ปรับปรุงจากสเปกเดิมของคุณ)
@@ -442,12 +426,6 @@ select {
   background: #00ff66;
   color: #03060f;
   box-shadow: 0 0 20px #00ff66;
-}
-
-.flex-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
 }
 
 /* =========================================================
